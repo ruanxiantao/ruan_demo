@@ -1,5 +1,6 @@
 package com.beijing.ruan.utils;
 
+import org.apache.ibatis.executor.BaseExecutor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +23,10 @@ public class BaseDaoImpl<T,E> extends SqlSessionDaoSupport {
     private String getMapperNamespaceByClass(E e){
         String nameSpaceName = "";
         nameSpaceName = e.getClass().getSimpleName();
-        return "Mapper" + "." + nameSpaceName;
+        return MAPPER_NAMESPACE_SUFFIX + NAMESPACE_ID_LINK_TAG + nameSpaceName;
     }
 
-    public T fingById(String paramName, Object object) throws Exception {
+    public T findById(String paramName, Object object) throws Exception {
         try {
             return this.getSqlSession().selectOne(paramName,object);
         }catch (Exception e){
@@ -35,8 +36,8 @@ public class BaseDaoImpl<T,E> extends SqlSessionDaoSupport {
 
     public Page<T> findByPage(String paramName, Object paramValue, PaginationParameters paginationParameters) throws Exception {
         try {
-            int totalDataSize = this.findTotalDataSize(paramName, paramValue, paginationParameters);
-            List dataList = this.getDataListByPage(paramName, paramValue, paginationParameters);
+            int totalDataSize = findTotalDataSize(paramName, paramValue, paginationParameters);
+            List dataList = this.getDataListByPage(paramName, paramValue, paginationParameters,totalDataSize);
             Page<T> page = new Page(paginationParameters.getCurrentPageNumber(), paginationParameters.getPageMaxSize(), dataList, totalDataSize, paginationParameters.get_page_div());
             return page;
         }catch (Exception e){
@@ -44,21 +45,25 @@ public class BaseDaoImpl<T,E> extends SqlSessionDaoSupport {
         }
     }
 
-    public List<T> getDataListByPage(String paramName, Object paramValue, PaginationParameters paginationParameters, int totalDataSize) throws Exception{
-        int firstPageValue = PageCreater.getFirstPageValue(paginationParameters, totalDataSize);
-        int secondValue = PageCreater.getSecondPageValue(firstPageValue, totalDataSize, paginationParameters.getPageMaxSize());
-        return this.getDataListByPage(paramName, paramValue, paginationParameters, firstPageValue, secondValue);
-    }catch (Exception e) {
-        throw new Exception(e);
+    public List<T> getDataListByPage(String paramName, Object paramValue, PaginationParameters paginationParameters, int totalDataSize) throws Exception {
+        try {
+            int firstPageValue = PageCreater.getFirstPageValue(paginationParameters, totalDataSize);
+            int secondValue = PageCreater.getSecondPageValue(firstPageValue, totalDataSize, paginationParameters.getPageMaxSize());
+            List<T> dataListByPage = getDataListByPages(paramName, paramValue, paginationParameters, firstPageValue, secondValue);
+            return dataListByPage;
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
     }
 
-    public List<T> getDataListByPage(String paramName, Object paramValue, PaginationParameters paginationParameters, int firstPageValue, int secondValue) throws Exception {
+    private List<T> getDataListByPages(String paramName, Object paramValue, PaginationParameters paginationParameters, int firstPageValue, int secondValue) throws Exception {
         try {
             return this.getSqlSession().selectList(paramName, paramValue, new ESNRowBounds(firstPageValue,secondValue, paginationParameters.getOrderKey(), paginationParameters.getOrderType(), paginationParameters.getOrderBy()));
         }catch (Exception e){
             throw new Exception(e);
         }
     }
+
 
     public int findTotalDataSize(String paramName, Object paramValue, PaginationParameters paginationParameters) throws Exception {
         try {
@@ -74,8 +79,91 @@ public class BaseDaoImpl<T,E> extends SqlSessionDaoSupport {
         }
     }
 
+    public int insert(String paramName, Object object) throws Exception{
+        try{
+            return this.getSqlSession().insert(paramName, object);
+        }catch (Exception e){
+            throw new Exception(e);
+        }
+    }
 
+    public List<T> findByParam(String paramName, Object object) throws Exception{
+        try{
+            return this.getSqlSession().selectList(paramName, object);
+        }catch (Exception e){
+            throw new Exception(e);
+        }
+    }
 
+    public int update(String paramName, Object object) throws Exception{
+        try{
+            return this.getSqlSession().update(paramName, object);
+        }catch (Exception e){
+            throw new Exception(e);
+        }
+    }
+
+    public int delete(String paramName, Object object) throws Exception{
+        try{
+            return this.getSqlSession().delete(paramName, object);
+        }catch (Exception e){
+            throw new Exception(e);
+        }
+    }
+
+    public T findEntityById(E e) throws Exception{
+        try{
+            String paramName = this.getMapperNamespaceByClass(e) + "." + SqlIdSub.findById.toString();
+            return this.findById(paramName, e);
+        }catch (Exception var){
+            throw new Exception(var);
+        }
+    }
+
+    public Page<T> findEntityByPage(E e, PaginationParameters paginationParameters) throws Exception{
+        try{
+            String paramName = this.getMapperNamespaceByClass(e) + "." + SqlIdSub.findByPage;
+            return this.findByPage(paramName, e, paginationParameters);
+        }catch (Exception var){
+            throw new Exception(var);
+        }
+    }
+
+    public List<T> findByEntity(E e) throws Exception{
+        try {
+            String paramName = this.getMapperNamespaceByClass(e) + "." + SqlIdSub.list;
+            return this.findByParam(paramName, e);
+        }catch (Exception var){
+            throw new Exception(var);
+        }
+    }
+
+    public int deleteByEntity(E e) throws Exception{
+        try{
+            String paramName = this.getMapperNamespaceByClass(e) + "." + SqlIdSub.delete;
+            return this.delete(paramName, e);
+        }catch (Exception var){
+            throw new Exception(var);
+        }
+    }
+
+    public int insertEntity(E e) throws Exception{
+        try {
+            String paramName = this.getMapperNamespaceByClass(e) + "." + SqlIdSub.insert;
+            return this.insert(paramName, e);
+        }catch (Exception var){
+            throw new Exception(var);
+        }
+    }
+
+    public int updateEntityById(E e) throws Exception{
+        try {
+            String paramName = this.getMapperNamespaceByClass(e) + "." + SqlIdSub.update;
+            return this.update(paramName, e);
+        }catch (Exception var){
+            throw new Exception(var);
+        }
+    }
 
     @Override
     public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
