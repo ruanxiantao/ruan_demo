@@ -1,6 +1,5 @@
 package com.beijin.ruangateway.config;
 
-import com.hilife.internal.common.model.Request;
 import com.hilife.internal.common.util.JsonUtil;
 import io.netty.buffer.ByteBufAllocator;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -11,7 +10,6 @@ import org.springframework.core.io.buffer.NettyDataBufferFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
