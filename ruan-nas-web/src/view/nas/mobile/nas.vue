@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table :data="diskData" width="100%">
+    <el-table :data="diskData" ref="singleTable" width="100%">
       <el-table-column property="fileName" label="文件名" min-width="70%">
         <template slot-scope="scope">
           <span class="el-icon-folder" v-if="scope.row.fileType === 'directory'"></span>
@@ -30,42 +30,48 @@
       </el-table-column>
     </el-table>
     <br/>
-    <div>
-      <el-form :model="formInfo" class="demo-form-inline" style="text-align: left">
-        <el-form-item label="上传文件到目标路径" label-width="45%">
-          <el-input v-model="dir" :disabled="false" style="width: 80%"></el-input>
-        </el-form-item>
-        <el-form-item  label="通过url转存资源到本云盘" label-width="45%">
-          <el-button @click="dialogFormVisible = true" style="width: 80%">创建任务</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-    <el-dialog title="资源链接" :visible.sync="dialogFormVisible" width="90%">
-      <el-form :model="form">
-        <el-form-item label="资源url" label-width="20%">
-          <el-input v-model="form.url" auto-complete="off"></el-input>
-        </el-form-item>
-      </el-form>
+    <el-dialog title="操作" :visible.sync="dialogOuterFormVisible" width="100%">
+      <el-dialog title="资源链接" :visible.sync="dialoginnerFormVisible" width="80%" append-to-body>
+        <el-form :model="form">
+          <el-form-item label="资源url" label-width="20%">
+            <el-input v-model="form.url" auto-complete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialoginnerFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="downloadFileFromUrl">确 定</el-button>
+        </div>
+      </el-dialog>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="downloadFileFromUrl">确 定</el-button>
+        <el-form :model="formInfo" class="demo-form-inline" style="text-align: left">
+          <el-form-item label="上传文件到目标路径" label-width="50%">
+            <el-input v-model="dir" :disabled="false" style="width: 80%"></el-input>
+          </el-form-item>
+          <el-form-item label="通过url转存资源到本云盘" label-width="50%">
+            <el-button @click="dialoginnerFormVisible = true" style="width: 80%">创建任务</el-button>
+          </el-form-item>
+        </el-form>
+        <el-upload
+          class="upload-demo"
+          drag
+          :action="uploadUrl"
+          :data="uploadFileInfo"
+          :show-file-list="true"
+          :file-list="formInfo.fileList"
+          :on-success="uploadSuccess"
+          :on-preview="downloadFileInfo"
+          multiple>
+          <i class="el-icon-upload"></i>
+          <div class="el-upload__text"><em>上传文件到当前目录</em></div>
+        </el-upload>
+        <el-button @click="dialogOuterFormVisible = false">取消</el-button>
       </div>
     </el-dialog>
-    <div style="text-align: left">
-      <el-upload
-        class="upload-demo"
-        drag
-        :action="uploadUrl"
-        :data="uploadFileInfo"
-        :show-file-list="true"
-        :file-list="formInfo.fileList"
-        :on-success="uploadSuccess"
-        :on-preview="downloadFileInfo"
-        multiple>
-        <i class="el-icon-upload"></i>
-        <div class="el-upload__text"><em>上传文件到当前目录</em></div>
-      </el-upload>
-      <el-button @click="goback" v-if="dir !== '/'">返回</el-button>
+    <div>
+      <el-button @click="dialogOuterFormVisible = true" class="buttomLocate1" v-if="dir !== '/'">操作</el-button>
+    </div>
+    <div>
+      <el-button @click="goback" class="buttomLocate2" v-if="dir !== '/'">返回</el-button>
     </div>
   </div>
 </template>
@@ -76,7 +82,8 @@
     components: {},
     data() {
       return {
-        dialogFormVisible: false,
+        dialogOuterFormVisible: false,
+        dialoginnerFormVisible: false,
         uploadUrl: process.env.BASE_API + '/multipartFile',
         dir: '/',
         uploadFileInfo: {
@@ -153,10 +160,16 @@
               } else {
                 fileInfo.fileSize = '--'
               }
-              fileInfo.filePath = fileInfo.filePath.replace(/\\/g,"/");
+              fileInfo.filePath = fileInfo.filePath.replace(/\\/g, "/");
               fileInfo.lastModifiedTime = formatDate(fileInfo.lastModifiedTime);
             }
             this.diskData = data;
+            // this.$refs["singleTable"].$nextTick(function () {
+            //   this.escrollY(
+            //     ".el-table__body-wrapper",
+            //     ".el-table__header-wrapper"
+            //   );
+            // })
           }
         });
       },
@@ -182,5 +195,23 @@
     text-align: center;
     color: #2c3e50;
     margin-top: 60px;
+  }
+
+  .buttomLocate1 {
+    position: fixed;
+    bottom: 100px;
+    right: 0;
+    text-align: right;
+  }
+
+  .buttomLocate2 {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    text-align: right;
+  }
+
+  .upload {
+    width: 80%;
   }
 </style>

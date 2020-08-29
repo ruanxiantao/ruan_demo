@@ -7,6 +7,10 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import Mint from 'mint-ui';
 import 'mint-ui/lib/style.css'
+import { scorllbar } from "./utils/scorllbar.js"; //滚动条
+Vue.prototype.escrollY = scorllbar     //滚动条
+
+import 'jquery'
 
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
