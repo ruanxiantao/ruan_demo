@@ -1,7 +1,6 @@
 package com.beijing.ruan.api;
 
 import com.beijing.ruan.entity.Blog;
-import com.beijing.ruan.entity.Person;
 
 /**
  *@Author 阮先涛
