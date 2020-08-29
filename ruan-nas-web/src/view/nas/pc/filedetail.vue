@@ -1,18 +1,18 @@
 <template>
   <div>
     <div v-if="ext === 'mp4'">
-      <video autoplay="autoplay" loop="loop" controls muted>
+      <video preload="auto" controls>
         <source :src="url" type="video/mp4">
       </video>
     </div>
-    <!--<div v-else-if="ext === 'mp3'">-->
-      <!--<audio></audio>-->
-    <!--</div>-->
-    <!--<div v-if="ext === 'jpg' || ext === 'jpeg' || ext === 'png'">-->
-      <!--<img :src="url">-->
-    <!--</div>-->
+    <div v-else-if="ext === 'mp3'">
+      <audio :src="url"></audio>
+    </div>
+    <div v-else-if="ext === 'jpg' || ext === 'jpeg' || ext === 'png'">
+      <img :src="url" width="100%">
+    </div>
     <div v-else>
-      <span></span>
+      <span>不支持的文件格式</span>
     </div>
     <el-button @click="goback">返回</el-button>
   </div>

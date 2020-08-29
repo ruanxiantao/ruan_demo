@@ -1,18 +1,18 @@
 <template>
   <div>
     <div v-if="ext === 'mp4'">
-      <video autoplay="autoplay" loop="loop" controls muted>
+      <video preload="auto" controls muted width="100%">
         <source :src="url" type="video/mp4">
       </video>
     </div>
-    <!--<div v-else-if="ext === 'mp3'">-->
-      <!--<audio></audio>-->
-    <!--</div>-->
-    <!--<div v-if="ext === 'jpg' || ext === 'jpeg' || ext === 'png'">-->
-      <!--<img :src="url">-->
-    <!--</div>-->
+    <div v-else-if="ext === 'mp3'">
+      <audio :src="url"></audio>
+    </div>
+    <div v-else-if="ext === 'jpg' || ext === 'jpeg' || ext === 'png'">
+      <img :src="url" width="100%">
+    </div>
     <div v-else>
-      <span></span>
+      <span>不支持的文件格式</span>
     </div>
     <el-button @click="goback">返回</el-button>
   </div>
@@ -28,6 +28,7 @@
       }
     },
     created() {
+      // this.url = "http://192.168.137.1:8082/" + "image/" + this.$route.query.url;
       this.url = process.env.BASE_API + "image/" + this.$route.query.url;
       let index = this.url.lastIndexOf('.');
       let length = this.url.length;

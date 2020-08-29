@@ -5,6 +5,7 @@ import com.beijing.ruan.model.FileInfo;
 import com.beijing.ruan.model.ReturnObject;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -157,6 +158,14 @@ public class NasController {
         returnObject.setSuccess(true);
         String dir = downLoadFileFromUrl.getDir();
         String url = downLoadFileFromUrl.getUrl();
+        if (StringUtils.isEmpty(dir)) {
+            returnObject.setMessage("目标路径不能为空");
+            return returnObject;
+        }
+        if (StringUtils.isEmpty(url)) {
+            returnObject.setMessage("目标url不能为空");
+            return returnObject;
+        }
         String fileName = getFileNameFromUrl(url);
         final String directory = dir.endsWith(ROOT_DIRECTORY) ? dir : dir + ROOT_DIRECTORY;
         File file = new File(directory + fileName);

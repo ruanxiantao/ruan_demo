@@ -42,7 +42,7 @@
     </div>
     <el-dialog title="资源链接" :visible.sync="dialogFormVisible">
       <el-form :model="form">
-        <el-form-item label="资源url">
+        <el-form-item label="资源url" :label-width="formLabelWidth">
           <el-input v-model="form.url" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
@@ -85,6 +85,7 @@
         form: {
           url: ''
         },
+        formLabelWidth: '100px',
         diskData: [{fileName: 22, fileSize: 11, lastModifiedTime: 1990}, {
           fileName: 22,
           fileSize: 11,
@@ -102,6 +103,14 @@
     },
     methods: {
       downloadFileFromUrl() {
+        if (this.form.url == null || this.form.url === '') {
+          alert("url不能为空");
+          return;
+        }
+        if (this.dir == null || this.dir === '') {
+          alert("目标路径不能为空");
+          return;
+        }
         downloadFileFromUrl(encodeURI(this.form.url), this.dir);
         this.dialogFormVisible = false;
       },
@@ -120,7 +129,7 @@
       },
       openFile(path) {
         this.$router.push({
-          path: '/filedetail',
+          path: '/filedetailpc',
           query: {url: path}
         })
       },

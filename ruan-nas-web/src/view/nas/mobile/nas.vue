@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-table :data="diskData" width="100%">
-      <el-table-column property="fileName" label="文件名">
+      <el-table-column property="fileName" label="文件名" min-width="70%">
         <template slot-scope="scope">
           <span class="el-icon-folder" v-if="scope.row.fileType === 'directory'"></span>
           <img src='../../../assets/logo.png' width="10px" height="10px" alt="" v-else>
@@ -18,10 +18,10 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column property="fileSize" label="大小"></el-table-column>
-      <el-table-column property="fileExt" label="类型"></el-table-column>
-      <el-table-column property="lastModifiedTime" label="修改时间"></el-table-column>
-      <el-table-column label="下载">
+      <!--<el-table-column property="fileSize" label="大小"></el-table-column>-->
+      <!--<el-table-column property="fileExt" label="类型"></el-table-column>-->
+      <!--<el-table-column property="lastModifiedTime" label="修改时间"></el-table-column>-->
+      <el-table-column label="下载" min-width="30%">
         <template slot-scope="scope">
           <el-button type="text" @click="downloadFileInfo(scope.row)" v-if="scope.row.fileType === 'file'">
             <span class="el-icon-download"></span>
@@ -31,18 +31,18 @@
     </el-table>
     <br/>
     <div>
-      <el-form :inline="true" :model="formInfo" class="demo-form-inline" style="text-align: left">
-        <el-form-item label="上传文件到目标路径">
-          <el-input v-model="dir" :disabled="false"></el-input>
+      <el-form :model="formInfo" class="demo-form-inline" style="text-align: left">
+        <el-form-item label="上传文件到目标路径" label-width="45%">
+          <el-input v-model="dir" :disabled="false" style="width: 80%"></el-input>
         </el-form-item>
-        <el-form-item>
-          <el-button @click="dialogFormVisible = true">通过url转存资源到本云盘</el-button>
+        <el-form-item  label="通过url转存资源到本云盘" label-width="45%">
+          <el-button @click="dialogFormVisible = true" style="width: 80%">创建任务</el-button>
         </el-form-item>
       </el-form>
     </div>
-    <el-dialog title="资源链接" :visible.sync="dialogFormVisible">
+    <el-dialog title="资源链接" :visible.sync="dialogFormVisible" width="90%">
       <el-form :model="form">
-        <el-form-item label="资源url">
+        <el-form-item label="资源url" label-width="20%">
           <el-input v-model="form.url" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
@@ -102,6 +102,14 @@
     },
     methods: {
       downloadFileFromUrl() {
+        if (this.form.url == null || this.form.url === '') {
+          alert("url不能为空");
+          return;
+        }
+        if (this.dir == null || this.dir === '') {
+          alert("目标路径不能为空");
+          return;
+        }
         downloadFileFromUrl(encodeURI(this.form.url), this.dir);
         this.dialogFormVisible = false;
       },
@@ -120,7 +128,7 @@
       },
       openFile(path) {
         this.$router.push({
-          path: '/filedetail',
+          path: '/filedetailmobile',
           query: {url: path}
         })
       },
