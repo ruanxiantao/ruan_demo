@@ -9,7 +9,10 @@
           打开网盘
         </el-button>
         <el-form-item label="上传文件到目标路径">
-          <el-input v-model="dir" disabled="false"></el-input>
+          <el-input v-model="dir" :disabled="false"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="hello">hello</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -83,6 +86,7 @@
       ElButton},
     data() {
       return {
+        flag:1,
         baseUrl:'http://localhost:8111',
         uploadUrl: 'http://localhost:8111/multipartFile',
         dir:'/',
@@ -136,7 +140,23 @@
       },
     },
     methods: {
+      hello(){
+        this.$router.push({
+          path:'/hello'
+        })
+      },
       openNetDisk(dir){
+        if(this.flag == 1){
+          debugger
+          let useragent = navigator.userAgent + 'Name/ruan';
+          Object.defineProperty(navigator, 'userAgent', {
+            value: useragent,
+            writable: false
+          });
+
+          this.flag = 2;
+        }
+        alert(navigator.userAgent)
         this.dir = dir;
         openNetDisk(this.dir).then(res => {
           if(res.success){

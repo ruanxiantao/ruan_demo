@@ -32,7 +32,6 @@ public class ConsumerApplicationMain {
     @Bean
     public MappingJackson2HttpMessageConverter getMappingJackson2HttpMessageConverter(){
         MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
-
         return messageConverter;
     }
 

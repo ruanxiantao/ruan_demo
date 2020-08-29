@@ -21,20 +21,72 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.*;
 
 @Controller
 public class BlogController {
 
+    /**
+     * 文件夹
+     */
     private static final String DIRECTORY = "directory";
+    /**
+     * 文件
+     */
     private static final String FILE = "file";
 
+    /**
+     * 调用博客服务
+     */
     @Autowired
     private BlogService blogService;
 
-//    @ResponseBody
-    @RequestMapping("/hello")
-    public String hello() throws Exception {
-        return "success";
+    /**
+     * 插入文件
+     * @return
+     * @throws Exception
+     */
+    @ResponseBody
+    @RequestMapping("/insertFileInfo")
+    public String insertFileInfo() throws Exception {
+
+
+
+
+
+
+
+
+
+
+
+
+
+        ExecutorService es = Executors.newFixedThreadPool(100);
+        CopyOnWriteArrayList<Object> list = new CopyOnWriteArrayList<>();
+        list.add(1);
+//        es.execute();
+//        es.submit()
+//        new Thread()
+        FutureTask<Integer> task = new FutureTask<Integer>(new Callable<Integer>() {
+            @Override
+            public Integer call() throws Exception {
+                return 100;
+            }
+        });
+//        es.submit()
+//        es.execute(task);
+//        Future<Integer> future = es.submit(new Callable<Integer>() {
+//            @Override
+//            public Integer call() throws Exception {
+//                return 200;
+//            }
+//        });
+        new Thread(task).start();
+//        Integer integer = future.get();
+        Integer integer = task.get();
+        return String.valueOf(integer);
+//        return "success";
 //        return blogService.insertPerson();
     }
     @RequestMapping("/he")

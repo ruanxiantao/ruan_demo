@@ -9,6 +9,9 @@
     </parent>
     <packaging>war</packaging>
     <modelVersion>4.0.0</modelVersion>
+    <properties>
+        <java.version>1.8</java.version>
+    </properties>
 
     <artifactId>ruan-provider</artifactId>
     <organization>
@@ -111,6 +114,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+
             </plugin>
         </plugins>
     </build>
